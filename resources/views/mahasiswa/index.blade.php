@@ -2,20 +2,6 @@
 
 @section('content')
     <style>
-        body {
-            background-color: #ffe6f0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 30px auto;
-            background-color: #fff0f5;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(255, 105, 180, 0.2);
-        }
-
         h1 {
             color: #d63384;
             text-align: center;
@@ -83,32 +69,38 @@
         button:hover {
             background-color: #f06292;
         }
-
     </style>
 
-    <div class="container">
-        <h1>Daftar Mahasiswa</h1>
-        <a href="{{ route('mahasiswa.create') }}" class="btn-tambah">➕ Tambah Mahasiswa</a>
-        <table>
+    <h1>Daftar Mahasiswa</h1>
+
+    <form action="{{ route('mahasiswa.index') }}" method="GET" style="margin-bottom: 15px;">
+        <input type="text" name="search" placeholder="Cari mahasiswa..." value="{{ request('search') }}"
+               style="padding: 8px; width: 250px; border-radius: 8px; border: 1px solid #ccc;">
+        <button type="submit"
+                style="padding: 8px 12px; background-color: #e83e8c; color: white; border: none; border-radius: 8px;">🔍 Cari</button>
+    </form>
+
+    <a href="{{ route('mahasiswa.create') }}" class="btn-tambah">➕ Tambah Mahasiswa</a>
+    <table>
+        <tr>
+            <th>NPM</th><th>Nama</th><th>Email</th><th>Kelas</th><th>Aksi</th>
+        </tr>
+        @foreach ($mahasiswa as $mhs)
             <tr>
-                <th>NPM</th><th>Nama</th><th>Email</th><th>Kelas</th><th>Aksi</th>
+                <td>{{ $mhs['npm'] }}</td>
+                <td>{{ $mhs['nama_mahasiswa'] }}</td>
+                <td>{{ $mhs['email'] }}</td>
+                <td>{{ $mhs['nama_kelas'] ?? '-' }}</td>
+                <td>
+                    <a href="{{ route('mahasiswa.edit', $mhs['npm']) }}">Edit</a>
+                    <form action="{{ route('mahasiswa.destroy', $mhs['npm']) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button onclick="return confirm('Hapus data ini?')">Hapus</button>
+                    </form>
+                </td>
             </tr>
-            @foreach ($mahasiswa as $mhs)
-                <tr>
-                    <td>{{ $mhs['npm'] }}</td>
-                    <td>{{ $mhs['nama_mahasiswa'] }}</td>
-                    <td>{{ $mhs['email'] }}</td>
-                    <td>{{ $mhs['nama_kelas'] ?? '-' }}</td>
-                    <td>
-                        <a href="{{ route('mahasiswa.edit', $mhs['npm']) }}">Edit</a>
-                        <form action="{{ route('mahasiswa.destroy', $mhs['npm']) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button onclick="return confirm('Hapus data ini?')">Hapus</button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-        </table>
-    </div>
+        @endforeach
+        
+    </table>
 @endsection
